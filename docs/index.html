@@ -46,4 +46,39 @@ body{overflow-x:clip}.widget{position:relative;overflow:hidden}
 .install-dialog h2{font-size:34px;margin:0 30px 12px 0;letter-spacing:-1px}
 .install-dialog p{font-size:14px}.install-dialog textarea{width:100%;min-height:132px;resize:vertical;background:#090a0c;color:#e4e8f0;border:1px solid #353944;border-radius:10px;padding:15px;font:13px/1.65 Geist,system-ui,sans-serif}
 .dialog-close{position:absolute;top:17px;right:17px;border:0;background:transparent;color:#c5cbd7;font-size:24px;cursor:pointer}.copy-row{display:flex;align-items:center;gap:14px;margin-top:16px}.copy-status{font-size:12px;color:#b6c6ee}
+
+/* Compact desktop composition; mobile flows naturally instead of shrinking text. */
+@media(min-width:801px){
+body{min-height:100svh;display:flex;flex-direction:column}
+nav{height:68px;flex:none;width:100%}
+main{width:100%;flex:1;display:flex;flex-direction:column}
+.hero{min-height:0;flex:1;padding:22px 0 26px;gap:40px}
+.hero:before{top:-68px}
+.hero h1{font-size:clamp(44px,4.6vw,62px);margin:18px 0;line-height:1.04}
+.hero .intro{font-size:15px;line-height:1.6;margin:0;max-width:420px}
+.actions{margin-top:22px}.fine{margin-top:13px}
+.desktop{min-height:0;padding:0}
+.widget{width:290px;padding:19px}.stats{margin:18px 0}.chart{height:80px}
+.amount{font-size:31px}.ring{width:58px;height:58px}
+.preview-note{margin-top:12px}.replay{margin-top:2px;min-height:30px;padding:5px 10px}
+.band{padding:18px 0;margin-bottom:0;flex:none}
+footer{width:100%;padding-top:16px;padding-bottom:16px;border-top:0;flex:none}
+}
+@media(max-width:800px){
+nav{height:64px}.links a:first-child{display:inline-flex;align-items:center;font-size:11px}.hero{padding:24px 0 28px;gap:28px}
+.hero h1{font-size:clamp(38px,8vw,52px);margin:16px 0;letter-spacing:-1.8px}
+.hero .intro{font-size:14px;line-height:1.65}.eyebrow{font-size:10px;letter-spacing:1.6px}
+.actions{margin-top:20px;gap:10px}.actions .lp-btn{font-size:12px;padding:12px 14px;min-height:44px}
+.desktop{min-height:0;padding:0}.widget{width:min(320px,100%);padding:20px}
+.preview-note{margin-top:14px}.replay{min-height:44px;margin-top:0}
+.band{grid-template-columns:1fr;gap:16px;padding:20px 0;margin-bottom:0;font-size:12px}
+.band span{margin-top:3px}footer{padding-top:20px;padding-bottom:20px;font-size:10px}
+.install-dialog{padding:24px 20px;max-height:calc(100svh - 32px);overflow:auto}
+.install-dialog h2{font-size:28px}.copy-row{flex-wrap:wrap}
+}
+@media(min-width:801px) and (max-height:720px){
+nav{height:56px}.hero{padding:12px 0 16px}.hero:before{top:-56px}
+.hero h1{font-size:46px}.widget{width:270px;padding:16px}.chart{height:66px}.stats{margin:14px 0}
+.band{padding:14px 0}footer{padding-top:12px;padding-bottom:12px}
+}
 </style></head><body><nav><a class="brand" href="#">◔ Pace</a><div class="links"><a href="https://github.com/domingocruz-AT/pace"><svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.93.43.37.82 1.1.82 2.22v3.3c0 .32.22.7.82.58A12 12 0 0 0 12 .5Z"/></svg>View on GitHub ↗</a></div></nav><main><section class="hero"><div><div class="eyebrow">Token costs, in view</div><h1>Every token counts.<br><em>See what it costs.</em></h1><p class="intro">See your Codex agent’s token usage and estimated cost at a glance. Compare models, explore daily spending, and keep your budget in view.</p><div class="actions"><button class="lp-btn lp-btn-primary" id="installTrigger" type="button">Install with your agent ↗</button><a class="lp-btn lp-btn-ghost" href="https://github.com/domingocruz-AT/pace"><svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.93.43.37.82 1.1.82 2.22v3.3c0 .32.22.7.82.58A12 12 0 0 0 12 .5Z"/></svg>Explore the source</a></div><p class="fine">Built locally on macOS · Experimental · No hosted backend</p></div><div class="desktop"><span class="desktop-label"></span><div class="widget" aria-label="Illustrative Pace preview with fictional sample usage"><div class="row"><strong>◔ &nbsp;Pace</strong><span class="pill">Week⌄</span></div><div class="stats row"><div><div class="sub">ESTIMATED USAGE</div><div class="amount">$12.48</div><div class="sub">$7.52 remaining of $20 target</div></div><div class="ring">62%</div></div><div class="row"><span>Daily usage</span><span class="sub">Tokens</span></div><div class="chart" aria-hidden="true"><i class="bar" style="height:28%"></i><i class="bar" style="height:54%"></i><i class="bar" style="height:39%"></i><i class="bar" style="height:73%"></i><i class="bar" style="height:60%"></i><i class="bar" style="height:90%"></i><i class="bar" style="height:48%"></i></div><div class="axis"><span>Mon</span><span>Thu</span><span>Sun</span></div><div class="legend">Model breakdown · Your pace, at a glance</div></div><span class="preview-note">Illustrative preview · Fictional sample data</span><button class="replay" type="button" aria-label="Replay ball to dashboard animation">↻ Replay the morph</button></div></section><div class="band"><div>At the edge, out of the way<span>Hover to expand. Drag to dock.</span></div><div>Your usage, with context<span>By day, by model, by range.</span></div><div>Built on your Mac<span>Your existing Codex sign-in.</span></div></div></main><footer><span>◔ Pace · Made by Domingo Cruz</span><a href="https://github.com/domingocruz-AT/pace"><svg class="github-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.81 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.93.43.37.82 1.1.82 2.22v3.3c0 .32.22.7.82.58A12 12 0 0 0 12 .5Z"/></svg>Built in the open ↗</a></footer><dialog class="install-dialog" id="installDialog" aria-labelledby="installTitle"><button class="dialog-close" type="button" aria-label="Close installation instructions">×</button><h2 id="installTitle">Let your agent install Pace.</h2><p>Copy this instruction into Codex or your coding agent.</p><textarea id="installCommand" aria-label="Agent installation instruction" readonly>Install Pace from https://github.com/domingocruz-AT/pace. Follow AGENTS.md, check the macOS prerequisites, and run sh install.sh. Ask me before using my existing Codex sign-in.</textarea><div class="copy-row"><button class="lp-btn lp-btn-primary" id="copyInstall" type="button">Copy instruction</button><span class="copy-status" role="status" id="copyStatus"></span></div><p class="fine">Requires macOS, Xcode Command Line Tools, and Python 3. Pace uses estimated costs from unofficial endpoints; targets do not enforce spending caps.</p></dialog><script src="motion.js?v=edge-drag"></script><script src="install-dialog.js"></script></body></html>
