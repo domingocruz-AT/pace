@@ -64,6 +64,70 @@
         {duration:600,delay:i*65,fill:'backwards',easing:'cubic-bezier(.2,.7,.2,1)'}));
     morph();
   }
+  // Direct pointer tracking with a damped spring on release. No layout writes per frame.
+  let drag=null, physics=0;
+  widget.style.touchAction='none';widget.style.cursor='grab';
+  widget.setAttribute('aria-label','Interactive Pace preview. Drag to move; release to expand.');
+  function restore(){
+    cancelAnimationFrame(physics);physics=0;drag=null;
+    widget.style.transform='';widget.style.clipPath='';widget.style.cursor='grab';
+    [...widget.children].forEach(el=>el.style.opacity='');
+  }
+  widget.addEventListener('pointerdown',e=>{
+    if(e.button!==0)return;
+    cancel();restore();
+    const r=widget.getBoundingClientRect();
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,px:e.clientX,py:e.clientY,dx:0,dy:0,vx:0,vy:0,t:performance.now(),w:r.width,h:r.height,cx:r.left+r.width/2,cy:r.top+r.height/2};
+    widget.setPointerCapture(e.pointerId);widget.style.cursor='grabbing';
+    [...widget.children].forEach(el=>el.style.opacity='0');
+    widget.style.clipPath=`inset(${(r.height-56)/2}px ${(r.width-56)/2}px round 28px)`;
+    if(!reducedMotion())animate(widget,[{clipPath:'inset(0px round 22px)'},{clipPath:widget.style.clipPath}],{duration:180,easing:'cubic-bezier(.2,.8,.2,1)'});
+  });
+  const reducedMotion=()=>reduce.matches;
+  widget.addEventListener('pointermove',e=>{
+    if(!drag||drag.id!==e.pointerId)return;
+    const now=performance.now(),dt=Math.max(8,now-drag.t);
+    drag.vx=.55*drag.vx+.45*(e.clientX-drag.px)/dt*1000;
+    drag.vy=.55*drag.vy+.45*(e.clientY-drag.py)/dt*1000;
+    drag.px=e.clientX;drag.py=e.clientY;drag.t=now;
+    drag.dx=Math.max(38-drag.cx,Math.min(innerWidth-38-drag.cx,e.clientX-drag.x));
+    drag.dy=Math.max(38-drag.cy,Math.min(innerHeight-38-drag.cy,e.clientY-drag.y));
+    paintDrag(drag.dx,drag.dy,drag.vx,drag.vy);
+  });
+  function paintDrag(x,y,vx,vy){
+    const speed=Math.hypot(vx,vy),stretch=reducedMotion()?0:Math.min(.48,speed/4200);
+    const angle=Math.atan2(vy,vx)*180/Math.PI;
+    widget.style.transform=`translate(${x}px,${y}px) rotate(${angle}deg) scale(${1+stretch},${1/(1+stretch)}) rotate(${-angle}deg)`;
+  }
+  function release(e){
+    if(!drag||drag.id!==e.pointerId)return;
+    const d=drag;drag=null;widget.style.cursor='grab';
+    if(widget.hasPointerCapture(e.pointerId))widget.releasePointerCapture(e.pointerId);
+    if(reducedMotion()){restore();return;}
+    let x=d.dx,y=d.dy,vx=Math.max(-1600,Math.min(1600,d.vx)),vy=Math.max(-1600,Math.min(1600,d.vy)),last=performance.now(),start=last;
+    function step(now){
+      const dt=Math.min(.025,(now-last)/1000);last=now;
+      vx+=(-180*x-20*vx)*dt;vy+=(-180*y-20*vy)*dt;x+=vx*dt;y+=vy*dt;
+      x=Math.max(38-d.cx,Math.min(innerWidth-38-d.cx,x));y=Math.max(38-d.cy,Math.min(innerHeight-38-d.cy,y));
+      paintDrag(x,y,vx,vy);
+      if((Math.hypot(x,y)<.5&&Math.hypot(vx,vy)<8)||now-start>1600){
+        restore();
+        const r=widget.getBoundingClientRect();
+        animate(widget,[{clipPath:`inset(${(r.height-56)/2}px ${(r.width-56)/2}px round 28px)`},{clipPath:'inset(0px round 22px)'}],{duration:450,easing:'cubic-bezier(.16,1,.3,1)'});
+        [...widget.children].forEach((el,i)=>animate(el,[{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:250,delay:170+i*35,fill:'backwards'}));
+        return;
+      }
+      physics=requestAnimationFrame(step);
+    }
+    physics=requestAnimationFrame(step);
+  }
+  widget.addEventListener('pointerup',release);
+  widget.addEventListener('pointercancel',()=>{cancel();restore();});
+  widget.addEventListener('lostpointercapture',()=>{if(drag){cancel();restore();}});
+  window.addEventListener('resize',restore);
+  window.addEventListener('scroll',restore,{passive:true});
+  reduce.addEventListener('change',()=>{if(reduce.matches)restore();});
+  replay.addEventListener('click',restore);
   replay.setAttribute('aria-label','Replay edge tab drag and expansion');
   replay.addEventListener('click',morph);
   window.addEventListener('resize',cancel);
