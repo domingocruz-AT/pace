@@ -22,10 +22,11 @@
       const p = i === 60 ? 1 : Math.min(1, Math.max(0, response));
       frames.push({clipPath:`inset(${y*(1-p)}px ${x*(1-p)}px round ${24-2*p}px)`,offset:t});
     }
-    animate(widget, frames, {duration:900, delay:180, fill:'backwards',easing:'linear'});
+    animate(widget, [{transform:'translateY(0) scale(1)'},{transform:'translateY(-10px) scale(.96,1.04)',offset:.35},{transform:'translateY(2px) scale(1.05,.95)',offset:.7},{transform:'translateY(0) scale(1)'}], {duration:1400,easing:'ease-in-out'});
+    animate(widget, frames, {duration:900, delay:1400, fill:'backwards',easing:'linear'});
     [...widget.children].forEach((el,i) => animate(el,
       [{opacity:0,transform:'translateY(9px)'},{opacity:1,transform:'translateY(0)'}],
-      {duration:360,delay:480+i*65,fill:'backwards',easing:'cubic-bezier(.2,.7,.2,1)'}));
+      {duration:360,delay:1700+i*65,fill:'backwards',easing:'cubic-bezier(.2,.7,.2,1)'}));
   }
   if (!reduce.matches) {
     document.querySelectorAll('nav,.hero>div:first-child>*').forEach((el,i) =>
