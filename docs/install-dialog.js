@@ -3,8 +3,8 @@
   const command = document.getElementById('installCommand');
   const status = document.getElementById('copyStatus');
   document.getElementById('installTrigger').addEventListener('click', () => {
-    status.textContent = '';
     dialog.showModal();
+    copyPrompt();
   });
   dialog.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', e => {
@@ -12,8 +12,10 @@
     const r = dialog.getBoundingClientRect();
     if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close();
   });
-  document.getElementById('copyInstall').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(command.value); status.textContent = 'Copied. Paste into your agent.'; }
-    catch { command.focus(); command.select(); status.textContent = 'Press ⌘C to copy the selected instruction.'; }
-  });
+  async function copyPrompt() {
+    status.textContent = 'Copying…';
+    try { await navigator.clipboard.writeText(command.value); status.textContent = '✓ Copied to clipboard'; }
+    catch { command.focus(); command.select(); status.textContent = 'Select and copy with ⌘C / Ctrl+C.'; }
+  }
+  document.getElementById('copyInstall').addEventListener('click', copyPrompt);
 })();
