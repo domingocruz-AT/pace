@@ -6,8 +6,8 @@
   function close() { panel.hidden=true; trigger.setAttribute('aria-expanded','false'); trigger.focus(); }
   async function copyPrompt() {
     status.textContent='Copying…';
-    try { await navigator.clipboard.writeText(command.value); status.textContent='✓ Copied to clipboard'; }
-    catch { command.focus(); command.select(); status.textContent='Select and copy with ⌘C / Ctrl+C.'; }
+    try { await navigator.clipboard.writeText(command.textContent); status.textContent='✓ Copied to clipboard'; }
+    catch { const selection=window.getSelection(); const range=document.createRange();range.selectNodeContents(command);selection.removeAllRanges();selection.addRange(range);status.textContent='Press ⌘C / Ctrl+C to copy.'; }
   }
   trigger.addEventListener('click', () => {
     if(!panel.hidden) { close(); return; }
@@ -17,7 +17,5 @@
       {duration:240,easing:'cubic-bezier(.2,.8,.2,1)'});
     copyPrompt();
   });
-  panel.querySelector('.dialog-close').addEventListener('click',close);
   panel.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
-  document.getElementById('copyInstall').addEventListener('click',copyPrompt);
 })();
