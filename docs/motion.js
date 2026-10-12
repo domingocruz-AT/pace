@@ -77,10 +77,11 @@
     if(e.button!==0)return;
     cancel();restore();
     const r=widget.getBoundingClientRect();
-    drag={id:e.pointerId,x:e.clientX,y:e.clientY,px:e.clientX,py:e.clientY,dx:0,dy:0,vx:0,vy:0,t:performance.now(),w:r.width,h:r.height,cx:r.left+r.width/2,cy:r.top+r.height/2};
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,px:e.clientX,py:e.clientY,dx:e.clientX-(r.left+r.width/2),dy:e.clientY-(r.top+r.height/2),vx:0,vy:0,t:performance.now(),w:r.width,h:r.height,cx:r.left+r.width/2,cy:r.top+r.height/2};
     widget.setPointerCapture(e.pointerId);widget.style.cursor='grabbing';
     [...widget.children].forEach(el=>el.style.opacity='0');
     widget.style.clipPath=`inset(${(r.height-56)/2}px ${(r.width-56)/2}px round 28px)`;
+    paintDrag(drag.dx,drag.dy,0,0);
     if(!reducedMotion())animate(widget,[{clipPath:'inset(0px round 22px)'},{clipPath:widget.style.clipPath}],{duration:180,easing:'cubic-bezier(.2,.8,.2,1)'});
   });
   const reducedMotion=()=>reduce.matches;
@@ -90,12 +91,12 @@
     drag.vx=.55*drag.vx+.45*(e.clientX-drag.px)/dt*1000;
     drag.vy=.55*drag.vy+.45*(e.clientY-drag.py)/dt*1000;
     drag.px=e.clientX;drag.py=e.clientY;drag.t=now;
-    drag.dx=Math.max(38-drag.cx,Math.min(innerWidth-38-drag.cx,e.clientX-drag.x));
-    drag.dy=Math.max(38-drag.cy,Math.min(innerHeight-38-drag.cy,e.clientY-drag.y));
+    drag.dx=Math.max(38-drag.cx,Math.min(innerWidth-38-drag.cx,e.clientX-drag.cx));
+    drag.dy=Math.max(38-drag.cy,Math.min(innerHeight-38-drag.cy,e.clientY-drag.cy));
     paintDrag(drag.dx,drag.dy,drag.vx,drag.vy);
   });
   function paintDrag(x,y,vx,vy){
-    const speed=Math.hypot(vx,vy),stretch=reducedMotion()?0:Math.min(.48,speed/4200);
+    const speed=Math.hypot(vx,vy),stretch=reducedMotion()?0:Math.min(.65,speed/3200);
     const angle=Math.atan2(vy,vx)*180/Math.PI;
     widget.style.transform=`translate(${x}px,${y}px) rotate(${angle}deg) scale(${1+stretch},${1/(1+stretch)}) rotate(${-angle}deg)`;
   }
@@ -113,8 +114,10 @@
       if((Math.hypot(x,y)<.5&&Math.hypot(vx,vy)<8)||now-start>1600){
         restore();
         const r=widget.getBoundingClientRect();
-        animate(widget,[{clipPath:`inset(${(r.height-56)/2}px ${(r.width-56)/2}px round 28px)`},{clipPath:'inset(0px round 22px)'}],{duration:450,easing:'cubic-bezier(.16,1,.3,1)'});
-        [...widget.children].forEach((el,i)=>animate(el,[{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:250,delay:170+i*35,fill:'backwards'}));
+        const ball=`inset(${(r.height-56)/2}px ${(r.width-56)/2}px round 28px)`;
+        animate(widget,[{clipPath:ball,offset:0},{clipPath:ball,offset:.22},{clipPath:'inset(0px round 22px)',offset:1}],{duration:1050,easing:'cubic-bezier(.45,0,.2,1)'});
+        animate(widget,[{transform:'scale(1)',offset:0},{transform:'scale(1.5,.64)',offset:.22},{transform:'scale(.9,1.12)',offset:.5},{transform:'scale(1)',offset:1}],{duration:520,easing:'ease-in-out'});
+        [...widget.children].forEach((el,i)=>animate(el,[{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,delay:700+i*55,fill:'backwards'}));
         return;
       }
       physics=requestAnimationFrame(step);
